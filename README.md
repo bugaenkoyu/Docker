@@ -13,6 +13,7 @@ To accomplish this task, I've brought up a virtual machine on AWS with ubuntu 20
 In the next step I installed docker on virtual machine. To do this, I used the following commands:
 
 1. Update the apt package index and install packages to allow apt to use a repository over HTTPS:
+
 ~~~
 sudo apt-get update
 sudo apt-get install \
@@ -23,12 +24,14 @@ sudo apt-get install \
 ~~~
 
 2. Add Docker’s official GPG key:
+
 ~~~
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 ~~~
 
 3. Set up the repository:
+
 ~~~
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
@@ -36,29 +39,37 @@ echo \
 ~~~
 
 4. Update the apt package index:
+
 ~~~
 sudo apt-get update
 ~~~
 
 5. Install Docker Engine, containerd, and Docker Compose.
+
 ~~~
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ~~~
+
 ![Successfully install Docker](install-docker.png)
 
-To test the success of the Docker installation, I ran the command 
+To test the success of the Docker installation, I ran the command:
+
 ~~~
 sudo docker run hello-world
 ~~~
+
 ![Run HELLO WORLD](run-helloworld.png)
 
 In order to use Docker without sudo, I ran the following commands:
+
 1. Create the docker group.
+
 ~~~
 sudo groupadd docker
 ~~~
 
 2. Add your user to the docker group.
+
 ~~~
 sudo usermod -aG docker $USER
 ~~~
@@ -67,11 +78,13 @@ And then I restarted a virtual machine.
 After that I created folder in which created 2 files index.html and Dockerfile. In index.html file I added simple html code with my name and surname. In Dockerfile I added instructions with adding index.html file to nginx image.
 
 Then I ran the following command to build my own image with name myfile and version latest:
+
 ~~~
 docker build -t myfile:latest .
 ~~~
 
 To run my image I ran the following command:
+
 ~~~
 docker run -d -p 8080:80 myfile:latest
 ~~~
@@ -94,28 +107,28 @@ example: google.com )
 B ) The second container ping the first container via a private network
 5. Report save in GitHub repository
 
-
 In the beginning, I created a Dockerfile that installs iputils-ping on ubuntu 20.04 and executes the sleep infinity command. Then I built image with name mycontainer:latest.
 
 ![Build own container](build.png)
 
 The next step it is creating public and private network.
 To do this, I used the following commands:
+
 ~~~
 docker network create --internal private_network
 docker network create public_network
 ~~~
 
 ![Network](network.png)
-~~~
 
 Then I started the container with the public network settings and added it to the private network with the following command.
 
+~~~
 docker run -d --name public --network public_network mycontainer:latest
 docker network connect private_network public
 ~~~
 
-Another container I  added only to the private network.
+Another container I added only to the private network.
 
 ~~~
 docker run -d --name private --network private_network mycontainer:latest
@@ -125,17 +138,28 @@ On the next picture we can see two running containers with names: private and pu
 
 ![Сontainers are running](run-container.png)
 
+After inspecting the network interfaces of our containers, it can be seen that public is connected to two networks, and private to one, respectively.
 
+![Network on public interface](network-public.png)
+
+![Network on private interface](network-private.png)
+
+In order to access the created containers, use the command:
 
 ~~~
 docker exec -it public /bin/bash
 ~~~
-![Network on public interface](network-public.png)
+
+As you can see from the picture, we can easily ping both the Internet site and another container by IP from the container located in the public and private network.
+
+![Ping in public](ping-public.png)
+
 ~~~
 docker exec -it private /bin/bash
 ~~~
-![Network on private interface](network-private.png)
-![Ping in public](ping-public.png)
+
+From a container located in a private network, we can ping only another container. This is shown in the picture below.
+
 ![Ping in private](ping-private.png)
 
 The [Dockerfile files for task2 are available at the following link](https://github.com/bugaenkoyu/Docker/tree/main/task2).
