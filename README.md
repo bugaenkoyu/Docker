@@ -95,19 +95,34 @@ B ) The second container ping the first container via a private network
 5. Report save in GitHub repository
 
 
+In the beginning, I created a Dockerfile that installs iputils-ping on ubuntu 20.04 and executes the sleep infinity command. Then I built image with name mycontainer:latest.
+
 ![Build own container](build.png)
+
+The next step it is creating public and private network.
+To do this, I used the following commands:
 ~~~
 docker network create --internal private_network
 docker network create public_network
 ~~~
+
 ![Network](network.png)
 ~~~
+
+Then I started the container with the public network settings and added it to the private network with the following command.
+
 docker run -d --name public --network public_network mycontainer:latest
 docker network connect private_network public
 ~~~
+
+Another container I  added only to the private network.
+
 ~~~
 docker run -d --name private --network private_network mycontainer:latest
 ~~~
+
+On the next picture we can see two running containers with names: private and public.
+
 ![Сontainers are running](run-container.png)
 
 
