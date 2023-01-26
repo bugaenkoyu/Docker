@@ -68,7 +68,7 @@ After that I created folder in which created 2 files index.html and Dockerfile. 
 
 Then I ran the following command to build my own image with name myfile and version latest:
 ~~~
-docker build -t myfile:latest
+docker build -t myfile:latest .
 ~~~
 
 To run my image I ran the following command:
@@ -81,3 +81,46 @@ After run this command I went to browser and wrote next address 3.72.0.41:8080. 
 ![My name](name.png)
 
 The index.html and [Dockerfile files are available at the following link](https://github.com/bugaenkoyu/Docker/tree/main/task1).
+
+
+### Task 2
+
+1. Prepare private and public network
+2. Prepare one dockerfile based on ubuntu with the ping command
+3. One container must have access to the private and public networks the second container
+must be in the private network
+4. A ) Run a container that has access to the public network and ping some resources (
+example: google.com )
+B ) The second container ping the first container via a private network
+5. Report save in GitHub repository
+
+
+![Build own container](build.png)
+~~~
+docker network create --internal private_network
+docker network create public_network
+~~~
+![Network](network.png)
+~~~
+docker run -d --name public --network public_network mycontainer:latest
+docker network connect private_network public
+~~~
+~~~
+docker run -d --name private --network private_network mycontainer:latest
+~~~
+![Сontainers are running](run-container.png)
+
+
+
+~~~
+docker exec -it public /bin/bash
+~~~
+![Network on public interface](network-public.png)
+~~~
+docker exec -it private /bin/bash
+~~~
+![Network on private interface](network-private.png)
+![Ping in public](ping-public.png)
+![Ping in private](ping-private.png)
+
+The [Dockerfile files for task2 are available at the following link](https://github.com/bugaenkoyu/Docker/tree/main/task2).
